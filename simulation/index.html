@@ -331,7 +331,7 @@
   <div id="hud">
     <div id="title-bar">
       <h1>ANTI-SPOOFING NAVIGATION SYSTEM</h1>
-      <p>3D Daylight City Simulation &mdash; Traffic & Pedestrians</p>
+      <p>3D Expanded City Simulation &mdash; Traffic & Pedestrians</p>
       <p style="font-size: 10px; margin-top: 4px; color: #4a4a4a;">Contributors: <strong>Your Name</strong></p>
     </div>
     <div id="alert-banner">
@@ -444,11 +444,11 @@
     scene.fog = new THREE.FogExp2(0xe0f4ff, 0.0025);
 
     const camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 2000);
-    camera.position.set(100, 120, 160);
+    camera.position.set(220, 180, 250);
 
     const orbit = new OrbitControls(camera, canvas);
     orbit.enableDamping = true; orbit.dampingFactor = 0.06;
-    orbit.maxPolarAngle = Math.PI / 2.1; orbit.minDistance = 20; orbit.maxDistance = 500;
+    orbit.maxPolarAngle = Math.PI / 2.1; orbit.minDistance = 20; orbit.maxDistance = 800;
 
     let followCam = false;
 
@@ -469,8 +469,9 @@
        ═══════════════════════════════════════════════════════════ */
     const BLOCK = 60;       // city block size
     const ROAD_W = 12;      // road width
-    const GRID = 5;         // 5x5 grid
+    const GRID = 9;         // larger city (9x9 blocks)
     const HALF = (GRID * BLOCK) / 2;
+    const MAP_SIZE = GRID * BLOCK + 240; // extend a bit beyond the road grid for padding
 
     // Ground (Grass/Concrete base) with subtle tiled texture
     function makeGroundTexture() {
@@ -500,7 +501,7 @@
     }
 
     const gnd = new THREE.Mesh(
-      new THREE.PlaneGeometry(800, 800),
+      new THREE.PlaneGeometry(MAP_SIZE, MAP_SIZE),
       new THREE.MeshStandardMaterial({ map: makeGroundTexture(), roughness: 0.85, metalness: 0.05 })
     );
     gnd.rotation.x = -Math.PI / 2; gnd.receiveShadow = true;
@@ -694,15 +695,15 @@
     /* ═══════════════════════════════════════════════════════════
        ROUTE (waypoints along city streets)
        ═══════════════════════════════════════════════════════════ */
-    const WP_NAMES = ['Start', 'Main/1st', '3rd St. Mall', 'Central Park', 'Business Dist', 'Station', 'Home'];
+    const WP_NAMES = ['Start', 'Downtown', 'Central Plaza', 'City Stadium', 'Harbor', 'Airport', 'Tech Park'];
     const WAYPOINTS = [
       { x: -HALF + 0.1 * BLOCK, z: -HALF + 0.1 * BLOCK }, // Prevent exactly on corner
       { x: -HALF + 2 * BLOCK + ROAD_W / 4, z: -HALF + 0.1 * BLOCK },
-      { x: -HALF + 2 * BLOCK + ROAD_W / 4, z: -HALF + 3 * BLOCK - ROAD_W / 4 },
-      { x: -HALF + 4 * BLOCK + ROAD_W / 4, z: -HALF + 3 * BLOCK - ROAD_W / 4 },
-      { x: -HALF + 4 * BLOCK + ROAD_W / 4, z: -HALF + 5 * BLOCK - ROAD_W / 4 },
-      { x: -HALF + 1 * BLOCK + ROAD_W / 4, z: -HALF + 5 * BLOCK - ROAD_W / 4 },
-      { x: -HALF + 1 * BLOCK + ROAD_W / 4, z: -HALF + 1 * BLOCK - ROAD_W / 4 },
+      { x: -HALF + 2 * BLOCK + ROAD_W / 4, z: -HALF + 5 * BLOCK - ROAD_W / 4 },
+      { x: -HALF + 6 * BLOCK + ROAD_W / 4, z: -HALF + 5 * BLOCK - ROAD_W / 4 },
+      { x: -HALF + 6 * BLOCK + ROAD_W / 4, z: -HALF + 8 * BLOCK - ROAD_W / 4 },
+      { x: -HALF + 1 * BLOCK + ROAD_W / 4, z: -HALF + 8 * BLOCK - ROAD_W / 4 },
+      { x: -HALF + 1 * BLOCK + ROAD_W / 4, z: -HALF + 2 * BLOCK - ROAD_W / 4 },
     ];
 
     const wpGroup = new THREE.Group();
