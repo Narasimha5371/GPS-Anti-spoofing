@@ -1,0 +1,115 @@
+# =============================================================
+# nav_antispoofing — Configuration Parameters
+# =============================================================
+
+# ── Sensor Simulation ──
+gps_sensor_node:
+  ros__parameters:
+    publish_rate: 10.0
+    origin_lat: 12.9716
+    origin_lon: 77.5946
+    gps_noise_std: 0.000002
+    speed_mps: 5.0
+    path_radius: 100.0
+
+imu_sensor_node:
+  ros__parameters:
+    publish_rate: 50.0
+    gyro_noise_std: 0.01
+    accel_noise_std: 0.05
+    gyro_bias: 0.001
+    speed_mps: 5.0
+    path_radius: 100.0
+
+odom_sensor_node:
+  ros__parameters:
+    publish_rate: 20.0
+    odom_noise_std: 0.02
+    speed_mps: 5.0
+    path_radius: 100.0
+    publish_tf: true
+
+# ── EKF Fusion ──
+ekf_fusion_node:
+  ros__parameters:
+    origin_lat: 12.9716
+    origin_lon: 77.5946
+    process_noise_pos: 0.1
+    process_noise_vel: 0.5
+    process_noise_yaw: 0.01
+    gps_noise: 1.0
+    odom_noise_pos: 0.1
+    odom_noise_vel: 0.2
+    imu_yaw_noise: 0.05
+    publish_rate: 50.0
+
+# ── Anomaly Detector ──
+anomaly_detector_node:
+  ros__parameters:
+    origin_lat: 12.9716
+    origin_lon: 77.5946
+    max_velocity_mps: 30.0
+    drift_threshold_m: 10.0
+    velocity_jump_threshold: 15.0
+    history_window: 20
+    anomaly_ema_alpha: 0.3
+
+# ── ML Spoof Classifier ──
+ml_spoof_classifier:
+  ros__parameters:
+    origin_lat: 12.9716
+    origin_lon: 77.5946
+    window_size: 20
+    model_path: ""
+    classification_threshold: 0.6
+    inference_rate: 5.0
+
+# ── Spoof Alert Manager ──
+spoof_alert_manager:
+  ros__parameters:
+    anomaly_weight: 0.4
+    ml_weight: 0.6
+    suspect_threshold: 0.35
+    alert_threshold: 0.55
+    clear_threshold: 0.15
+    suspect_confirm_sec: 2.0
+    cooldown_sec: 5.0
+    publish_rate: 10.0
+
+# ── Waypoint Manager ──
+waypoint_manager_node:
+  ros__parameters:
+    origin_lat: 12.9716
+    origin_lon: 77.5946
+    arrival_radius: 5.0
+    loop_waypoints: true
+    waypoints_json: '[{"lat":12.9720,"lon":77.5950},{"lat":12.9720,"lon":77.5942},{"lat":12.9712,"lon":77.5942},{"lat":12.9712,"lon":77.5950}]'
+
+# ── Navigation Controller ──
+nav_controller_node:
+  ros__parameters:
+    max_linear_speed: 5.0
+    max_angular_speed: 1.0
+    alert_speed_factor: 0.2
+    safe_stop_decel: 1.0
+    pid_linear_kp: 0.5
+    pid_linear_ki: 0.01
+    pid_linear_kd: 0.05
+    pid_angular_kp: 2.0
+    pid_angular_ki: 0.0
+    pid_angular_kd: 0.1
+    control_rate: 20.0
+    safe_stop_timeout: 5.0
+
+# ── GPS Spoofer (test only) ──
+gps_spoofer_node:
+  ros__parameters:
+    attack_mode: "sudden_jump"
+    activation_delay: 10.0
+    attack_duration: 30.0
+    drift_rate: 0.0000005
+    jump_lat_offset: 0.001
+    jump_lon_offset: 0.001
+    replay_radius: 0.0005
+    replay_speed: 0.5
+    publish_rate: 10.0
