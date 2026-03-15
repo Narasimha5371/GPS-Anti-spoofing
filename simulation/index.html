@@ -578,6 +578,68 @@
     // Trees (Vibrant green)
     // (Trees removed from simulation)
 
+    // Obstacles (Parked cars and construction barriers)
+    const obstacleGroup = new THREE.Group();
+
+    // Parked cars on sidewalks
+    const parkedCarMat = new THREE.MeshLambertMaterial({ color: 0x444444 });
+    const parkedCars = [
+      { x: -HALF + 1 * BLOCK + ROAD_W / 2 + 2, z: -HALF + 2 * BLOCK - ROAD_W / 2 - 3, rot: 0 },
+      { x: -HALF + 3 * BLOCK - ROAD_W / 2 - 2, z: -HALF + 1 * BLOCK + ROAD_W / 2 + 3, rot: Math.PI / 2 },
+      { x: -HALF + 4 * BLOCK + ROAD_W / 2 + 2, z: -HALF + 4 * BLOCK - ROAD_W / 2 - 3, rot: Math.PI },
+      { x: -HALF + 2 * BLOCK - ROAD_W / 2 - 2, z: -HALF + 3 * BLOCK + ROAD_W / 2 + 3, rot: -Math.PI / 2 },
+    ];
+
+    parkedCars.forEach(car => {
+      const body = new THREE.Mesh(new THREE.BoxGeometry(3.2, 1.0, 5.5), parkedCarMat);
+      body.position.set(car.x, 0.5, car.z);
+      body.rotation.y = car.rot;
+      body.castShadow = true;
+      obstacleGroup.add(body);
+    });
+
+    // Construction barriers on roads
+    const barrierMat = new THREE.MeshLambertMaterial({ color: 0xff6600 });
+    const barriers = [
+      { x: -HALF + 2.5 * BLOCK, z: -HALF + 1.5 * BLOCK, rot: 0 }, // Horizontal barrier
+      { x: -HALF + 3.5 * BLOCK, z: -HALF + 2.5 * BLOCK, rot: Math.PI / 2 }, // Vertical barrier
+    ];
+
+    barriers.forEach(barrier => {
+      const base = new THREE.Mesh(new THREE.BoxGeometry(8, 0.3, 0.8), barrierMat);
+      base.position.set(barrier.x, 0.15, barrier.z);
+      base.rotation.y = barrier.rot;
+      base.castShadow = true;
+      obstacleGroup.add(base);
+
+      // Add warning stripes
+      for (let i = 0; i < 4; i++) {
+        const stripe = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.05, 0.9), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+        stripe.position.set(barrier.x + (i - 1.5) * 2, 0.35, barrier.z);
+        stripe.rotation.y = barrier.rot;
+        obstacleGroup.add(stripe);
+      }
+    });
+
+    // Traffic cones
+    const coneMat = new THREE.MeshLambertMaterial({ color: 0xffaa00 });
+    const cones = [
+      { x: -HALF + 1.8 * BLOCK, z: -HALF + 1.2 * BLOCK },
+      { x: -HALF + 2.2 * BLOCK, z: -HALF + 1.2 * BLOCK },
+      { x: -HALF + 3.8 * BLOCK, z: -HALF + 2.8 * BLOCK },
+      { x: -HALF + 4.2 * BLOCK, z: -HALF + 2.8 * BLOCK },
+    ];
+
+    cones.forEach(cone => {
+      const geometry = new THREE.CylinderGeometry(0, 0.4, 0.8, 8);
+      const mesh = new THREE.Mesh(geometry, coneMat);
+      mesh.position.set(cone.x, 0.4, cone.z);
+      mesh.castShadow = true;
+      obstacleGroup.add(mesh);
+    });
+
+    scene.add(obstacleGroup);
+
     // Streetlights (Turned off in day, but models visible)
     const poleMat = new THREE.MeshLambertMaterial({ color: 0x778899 });
     for (let i = 0; i <= GRID; i++) {
