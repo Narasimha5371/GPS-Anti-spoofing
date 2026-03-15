@@ -54,7 +54,7 @@
 
     body {
       overflow: hidden;
-      background: #87ceeb;
+      background: linear-gradient(135deg, #87ceeb 0%, #e0f4ff 55%, #ffffff 100%);
       font-family: 'Segoe UI', system-ui, sans-serif;
       color: #333;
     }
@@ -433,15 +433,15 @@
        RENDERER + SCENE (DAYLIGHT)
        ═══════════════════════════════════════════════════════════ */
     const canvas = document.getElementById('canvas3d');
-    const R = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+    const R = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
     R.setSize(innerWidth, innerHeight);
     R.setPixelRatio(Math.min(devicePixelRatio, 2));
     R.shadowMap.enabled = true;
     R.shadowMap.type = THREE.PCFSoftShadowMap;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x87ceeb); // Light sky blue
-    scene.fog = new THREE.FogExp2(0x87ceeb, 0.002);
+    scene.background = null; // use CSS background gradient for a polished sky
+    scene.fog = new THREE.FogExp2(0xe0f4ff, 0.0025);
 
     const camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 2000);
     camera.position.set(100, 120, 160);
@@ -472,10 +472,36 @@
     const GRID = 5;         // 5x5 grid
     const HALF = (GRID * BLOCK) / 2;
 
-    // Ground (Grass/Concrete base)
+    // Ground (Grass/Concrete base) with subtle tiled texture
+    function makeGroundTexture() {
+      const size = 512;
+      const canvasTex = document.createElement('canvas');
+      canvasTex.width = canvasTex.height = size;
+      const ctx = canvasTex.getContext('2d');
+      ctx.fillStyle = '#88aa77';
+      ctx.fillRect(0, 0, size, size);
+      ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+      ctx.lineWidth = 2;
+      const step = 64;
+      for (let i = 0; i <= size; i += step) {
+        ctx.beginPath();
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i, size);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(0, i);
+        ctx.lineTo(size, i);
+        ctx.stroke();
+      }
+      const tex = new THREE.CanvasTexture(canvasTex);
+      tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+      tex.repeat.set(20, 20);
+      return tex;
+    }
+
     const gnd = new THREE.Mesh(
       new THREE.PlaneGeometry(800, 800),
-      new THREE.MeshLambertMaterial({ color: 0x88aa77 }) // Nice grassy green
+      new THREE.MeshStandardMaterial({ map: makeGroundTexture(), roughness: 0.85, metalness: 0.05 })
     );
     gnd.rotation.x = -Math.PI / 2; gnd.receiveShadow = true;
     scene.add(gnd);
@@ -725,6 +751,19 @@
 
     scene.add(carGroup);
     carGroup.position.set(WAYPOINTS[0].x, 0, WAYPOINTS[0].z);
+
+    // Headlight glow (adds visual polish while driving)
+    const headlightL = new THREE.SpotLight(0xfff8e8, 1.2, 40, Math.PI / 6, 0.25, 1);
+    headlightL.position.set(-1.5, 1.0, 3.5);
+    headlightL.target.position.set(-1.5, 0.5, 10);
+    carGroup.add(headlightL);
+    carGroup.add(headlightL.target);
+
+    const headlightR = new THREE.SpotLight(0xfff8e8, 1.2, 40, Math.PI / 6, 0.25, 1);
+    headlightR.position.set(1.5, 1.0, 3.5);
+    headlightR.target.position.set(1.5, 0.5, 10);
+    carGroup.add(headlightR);
+    carGroup.add(headlightR.target);
 
     /* ═══════════════════════════════════════════════════════════
        TRAILS AND MARKERS
