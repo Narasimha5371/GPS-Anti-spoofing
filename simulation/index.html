@@ -700,11 +700,11 @@
        ═══════════════════════════════════════════════════════════ */
     const carGroup = new THREE.Group();
 
-    const bodyMat = new THREE.MeshLambertMaterial({ color: 0xe6f7f2 }); // Much lighter mint/pearl
+    const bodyMat = new THREE.MeshLambertMaterial({ color: 0xff0000 }); // Red body
     const body = new THREE.Mesh(new THREE.BoxGeometry(3.6, 1.2, 6.2), bodyMat);
     body.position.y = 1.1; body.castShadow = true; carGroup.add(body);
 
-    const cabMat = new THREE.MeshLambertMaterial({ color: 0xd8ebf5 });
+    const cabMat = new THREE.MeshLambertMaterial({ color: 0xcc0000 }); // Slightly darker red cabin
     const cabin = new THREE.Mesh(new THREE.BoxGeometry(3.0, 1.0, 3.2), cabMat);
     cabin.position.set(0, 2.1, -0.3); cabin.castShadow = true; carGroup.add(cabin);
 
