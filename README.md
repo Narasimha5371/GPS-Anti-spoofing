@@ -1,3 +1,11 @@
+## 👥 Team Members
+* **Chiranthan** - ChiranthanM512
+* **Narasimha** -Narasimha5371
+* **Jaidithya** - jd572
+*
+
+
+
 # 🛡️ Anti-Spoofing & Obstacle Avoidance Navigation System
 
 A ROS2-based intelligent navigation system for autonomous cars. This project features multi-sensor fusion for accurate positioning, physics-based and machine-learning spoofing detection, and steering-based obstacle avoidance. It includes a high-fidelity 3D web simulation for testing and visualization.
@@ -139,6 +147,8 @@ Tweak system behavior in `config/nav_params.yaml`:
 - **`waypoints_json`**: Define the car's intended route.
 
 ---
+
+
 
 ## 📄 License
 MIT License
