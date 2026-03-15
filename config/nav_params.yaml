@@ -113,3 +113,9 @@ gps_spoofer_node:
     replay_radius: 0.0005
     replay_speed: 0.5
     publish_rate: 10.0
+
+# ── Obstacle Sensor ──
+obstacle_sensor_node:
+  ros__parameters:
+    publish_rate: 10.0
+    obstacle_positions: [-100.0, -144.0, -27.0, -100.0, 30.0, 30.0]

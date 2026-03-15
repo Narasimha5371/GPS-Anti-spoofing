@@ -33,6 +33,7 @@ setup(
             'waypoint_manager = nav_antispoofing.waypoint_manager_node:main',
             'nav_controller = nav_antispoofing.nav_controller_node:main',
             'gps_spoofer = nav_antispoofing.gps_spoofer_node:main',
+            'obstacle_sensor = nav_antispoofing.obstacle_sensor_node:main',
         ],
     },
 )

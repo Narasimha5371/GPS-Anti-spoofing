@@ -214,17 +214,34 @@ class NavControllerNode(Node):
         alignment = max(0, math.cos(heading_err))
         linear_speed *= alignment
 
-        # --- Backend collision avoidance: slow/stop if car ahead, do not leave route ---
+        # --- Backend collision avoidance: slow/stop and steer if car ahead ---
+        steering_offset = 0.0
+        avoidance_active = False
+        
         for ox, oy, ospeed in self.other_cars:
             odx = ox - px
             ody = oy - py
             odist = math.sqrt(odx**2 + ody**2)
             angle_to_car = math.atan2(ody, odx)
             angle_diff = normalize_angle(angle_to_car - yaw)
-            # If car is ahead (within 15m and within 45 degrees in front)
-            if odist < 15.0 and abs(angle_diff) < math.pi / 4:
-                # Slow down or stop, but do not steer away
-                linear_speed = min(linear_speed, max(0.0, ospeed * 0.8 - 2.0))
+            
+            # If obstacle is ahead (within 12m and within 45 degrees in front)
+            if odist < 12.0 and abs(angle_diff) < math.pi / 4:
+                # Slow down based on distance
+                speed_scale = max(0.0, (odist - 3.0) / 9.0) # 0 at 3m, 1 at 12m
+                linear_speed = min(linear_speed, self.max_lin * speed_scale)
+                
+                # Steer away if too close (within 8m)
+                if odist < 8.0:
+                    avoidance_active = True
+                    # Steer away from obstacle center
+                    side = -1.0 if angle_diff > 0 else 1.0
+                    # Force increases as we get closer
+                    force = (8.0 - odist) / 5.0 * (math.pi / 3) # Up to 60 deg offset
+                    steering_offset += side * force
+
+        target_yaw = math.atan2(dy, dx) + steering_offset
+        heading_err = normalize_angle(target_yaw - yaw)
 
         # Angular PID
         self.ang_integral += heading_err * self.dt

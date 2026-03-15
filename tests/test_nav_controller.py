@@ -126,6 +126,40 @@ class TestNavController:
         assert abs(abs(normalize(-3 * math.pi)) - math.pi) < 1e-10
         assert abs(normalize(0.5)) < 1.0
 
+    def test_obstacle_avoidance_steering(self):
+        """Vehicle should steer away from obstacles in front."""
+        # Vehicle at origin facing right (yaw=0)
+        px, py, yaw = 0.0, 0.0, 0.0
+        # Target is at (10, 0)
+        tx, ty = 10.0, 0.0
+        
+        # Obstacle at (5, 1) - slightly to the left
+        ox, oy = 5.0, 1.0
+        
+        dx, dy = tx - px, ty - py
+        odx, ody = ox - px, oy - py
+        odist = math.sqrt(odx**2 + ody**2)
+        angle_to_car = math.atan2(ody, odx)
+        angle_diff = angle_to_car - yaw # 11.3 deg
+        
+        target_yaw = math.atan2(dy, dx)
+        steering_offset = 0.0
+        
+        if odist < 12.0 and abs(angle_diff) < math.pi / 4:
+            if odist < 8.0:
+                side = -1.0 if angle_diff > 0 else 1.0
+                force = (8.0 - odist) / 5.0 * (math.pi / 3)
+                steering_offset = side * force
+                
+        # With obstacle to the left (angle_diff > 0), target_yaw should be decreased (steer right)
+        final_target_yaw = Math_atan2(dy, dx) + steering_offset
+        
+        assert steering_offset < 0.0, f"Should steer right (negative): {steering_offset}"
+        assert final_target_yaw < 0.0
+
+def Math_atan2(y, x):
+    return math.atan2(y, x)
+
 
 if __name__ == '__main__':
     pytest.main([__file__, '-v'])

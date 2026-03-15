@@ -85,4 +85,11 @@ def generate_launch_description():
             parameters=[config_file],
             output='screen',
         ),
+        Node(
+            package='nav_antispoofing',
+            executable='obstacle_sensor',
+            name='obstacle_sensor_node',
+            parameters=[config_file],
+            output='screen',
+        ),
     ])
